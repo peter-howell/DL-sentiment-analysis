@@ -7,5 +7,5 @@ then encode_text.py
 
 then model.py
 
-The model achieved 88.589% accuracy on test data
+The model achieved 88.59% accuracy on test data
 Compiled model is stored in /models/ directory
