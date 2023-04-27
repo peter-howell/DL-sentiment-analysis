@@ -15,47 +15,39 @@ label_dict = {0: 'negative', 1: 'neutral', 2: 'positive'}
 labels = ['negative', 'neutral', 'positive']
 model = keras.models.load_model('models/compiled_at_2023-04-27 002722.366698')
 
-def predict_label(text, model, encoder):
+def predict_label(text, encoder):
     text = clean_text(text)
     text = encoder(np.array([text]))
     prediction = np.argmax(model(text))
     return label_dict[prediction]
-
-
-
-def load_test_data():
-    with open('data/test_encoded_text', 'rb') as f:
-        X_test = np.load(f)
-    Y_test = pd.read_pickle('data/test_labels')
-    return X_test, Y_test
-
+    
 def make_encoder():
     with open('vocab', 'rb') as f:
         vocab = np.load(f)
     return TextVectorization(max_tokens=1000, output_sequence_length=250, vocabulary=vocab)
 
+def example(text, label, encoder):
+    if encoder is None:
+        encoder = make_encoder()
+    print('Review: \n\t' + text)
+    prediction = predict_label(text, encoder)
+    print('prediction: ' + prediction)
+    if prediction == label:
+        print('Correct!')
+    else: 
+        print('Incorrect. Expected ' + label)
+
 def examples():
+    encoder = make_encoder()
     # for these simple examples
     example_review = 'I loved this restaurant, the food was great'
-    encoder = make_encoder()
-    prediction = predict_label(example_review, model, encoder, dirty=True, encoded=False)
-    if prediction == 'positive':  # should be negative
-        print('Prediction was correct!')
-    else:
-        print('incorrect!')
-    example_review1 = 'food was yucky, service even worse'
-    prediction = predict_label(example_review1, model, encoder, dirty=True, encoded=False)
-    if prediction == 'negative':
-        print('prediction correct!')
-    else:
-        print('incorrect!')
-    example_review2 = "Eh it was okay, I don't have super strong feelings about it. Not the worst, not the best."
-    prediction = predict_label(example_review2, model, encoder, dirty=True, encoded=False)
-    if prediction == 'neutral':
-        print('prediction correct!')
-    else:
-        print('incorrect!')
+    example(example_review, 'positive', encoder)
+    example_review = 'food was yucky, service even worse'
+    example(example_review, 'negative', encoder)
+    example_review = "Eh it was okay, I don't have super strong feelings about it. Not the worst, not the best."
+    example(example_review, 'neutral', encoder)
 
+# def evaluate_test_data():
 
 def load_test_data():
     with open('data/test_encoded_text', 'rb') as f:
@@ -64,7 +56,9 @@ def load_test_data():
     return X_test, Y_test
 
 def predict_test_data():
-    X_test, _ = load_test_data()
+    X_test, y_test = load_test_data()
+    # convert y from length three vector to one integer, 
+    y_test = y_test.idxmax(axis=1)
 
     predictions = model.predict(X_test)
     predictions = np.argmax(predictions, axis=1)
