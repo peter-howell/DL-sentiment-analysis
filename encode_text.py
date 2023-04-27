@@ -40,7 +40,8 @@ encoder = TextVectorization(max_tokens=max_tokens, output_sequence_length=sequen
 encoder.adapt(reviews)
 print('encoder adapted')
 
-vocab = np.array(encoder.get_vocalbulary())
+# saving the encoder's vocabulary so it can be used for adapting later if needed
+vocab = np.array(encoder.get_vocabulary())
 with open('vocab', 'wb') as f:
     np.save(f, vocab)
 print('vocabulary saved')
