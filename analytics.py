@@ -106,4 +106,4 @@ def create_conf_mat():
     disp.plot(cmap='Blues')
     plt.savefig('confusion_matrix.png')
 
-# create_conf_mat()
+create_conf_mat()
