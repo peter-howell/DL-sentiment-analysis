@@ -13,4 +13,4 @@ model.py that creates, trains, saves, and performs minor evaluation on the neura
 
 analytics.py loads the compiled model and generates the confusion matrix. It also allows for examples in plain text to be encoded, embedded, and procesed by the model.
 
-The remaining files generated the wordclouds, tables, and histograms related to the word frequency.
+The remaining python files generate the wordclouds, tables, and histograms related to the word frequency.
