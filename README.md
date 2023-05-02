@@ -1,5 +1,5 @@
 # DS3010-Final
-Final project for DS3010: Computational Data Intelligence. 
+Final project for DS3010: Computational Data Intelligence. Our big focus was on our task 2, creating a neural network for sentiment analysis.
 
 ## Task 2 Information:
 
