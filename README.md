@@ -1,6 +1,8 @@
 # DS3010-Final
 Final project for DS3010: Computational Data Intelligence
 
+## Task 2 Information:
+
 The model achieved 88.59% accuracy on test data. The compiled, trained model is stored in the models/ directory, and the vocabulary binary is also here in vocab. 
 
 To create the model, first load_dataset.py was run, then encode_text.py and then model.py.
@@ -14,3 +16,7 @@ model.py that creates, trains, saves, and performs minor evaluation on the neura
 analytics.py loads the compiled model and generates the confusion matrix. It also allows for examples in plain text to be encoded, embedded, and procesed by the model.
 
 The remaining python files generate the wordclouds, tables, and histograms related to the word frequency.
+
+## Task 1 Information
+
+something
