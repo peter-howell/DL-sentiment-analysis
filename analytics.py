@@ -9,18 +9,19 @@ from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 from tensorflow import keras
 from tensorflow.keras.layers import TextVectorization
 
-from load_dataset import clean_text
+from load_datasets import clean_text
 
-label_dict = {0: 'negative', 1: 'neutral', 2: 'positive'}
-labels = ['negative', 'neutral', 'positive']
+
+# load the model
 model = keras.models.load_model('models/compiled_at_2023-04-27 002722.366698')
 
-def predict_label(text: str, encoder: TextVectorization) -> str:
+def predict_label(text: str, encoder: TextVectorization, label_dict: dict[int, str]) -> str:
     """Wrapper for predicting the label of certain text using the compiled model and an encoder
     
     Args:
         text (str): text to predict
         encoder (TextVectorization): encoder to encode the text with, converts string to sequence of token indices
+        label_dict: labels to use 
     Returns:
         (str): the predicted label of the text. Either positive, neutral, or negative
     """
@@ -33,7 +34,7 @@ def make_encoder() -> TextVectorization:
     """Makes a TextVectorization encoder using the vocabulary from the training dataset
     
     Returns:
-        (TextVectorization): a text encoder adapted on the vocabulary obtained from the training dataset
+        TextVectorization: a text encoder adapted on the vocabulary obtained from the training dataset
     """
     with open('vocab', 'rb') as f:
         vocab = np.load(f)
@@ -60,10 +61,11 @@ def example(text: str, label=None, encoder=None):
         print('Incorrect. Expected ' + label)
 
 def examples():
-    """Runs a set of examples on the model
+    """
+    Runs a set of examples
     """
     encoder = make_encoder()
-    # for these simple examples
+    # a few simple examples
     example_review = 'I loved this restaurant, the food was great'
     example(example_review, 'positive', encoder)
     example_review = 'food was yucky, service even worse'
@@ -80,30 +82,36 @@ def load_test_data():
     return X_test, Y_test
 
 def predict_test_data():
-    """Preidcts labels for the test data and saves them
+    """Preidcts labels for the test data and saves them in case they are needed later
     """
     X_test, y_test = load_test_data()
     # convert y from length three vector to one integer, 
     y_test = y_test.idxmax(axis=1)
-
     predictions = model.predict(X_test)
     predictions = np.argmax(predictions, axis=1)
     with open('predictions', 'wb') as f:
-        np.save(f,predictions)
+        np.save(f, predictions)
+    return predictions
 
-def create_conf_mat():
-    """Creates and saves plot of a confusion matrix of the model's predictions of the test data
+def plot_conf_mat(y_true, y_pred, fout_name: str, labels: list[str]):
+    """saves a plot of a confusion matrix
+
+    Args:
+        y_true : true y values
+        y_pred : predicted y values
     """
-    with open('predictions', 'rb') as f:
-        predictions = np.load(f)
+    cm = confusion_matrix(y_true, y_pred)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
+    disp.plot(cmap='Blues')
+    plt.savefig(fout_name)
+
+if __name__ == '__main__':
+    label_dict = {0: 'negative', 1: 'neutral', 2: 'positive'}
+    labels = ['negative', 'neutral', 'positive']
+    predictions = predict_test_data()
     predictions = pd.Series(predictions).map(label_dict)
     _, y_test = load_test_data()
     y_test = np.argmax(y_test, axis=1)
     y_test = pd.Series(y_test).map(label_dict)
     # Create confusion matrix and plot it
-    cm = confusion_matrix(y_test, predictions)
-    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
-    disp.plot(cmap='Blues')
-    plt.savefig('confusion_matrix.png')
-
-create_conf_mat()
+    plot_conf_mat(y_test, predictions, 'confusion_matrix.png', labels)
