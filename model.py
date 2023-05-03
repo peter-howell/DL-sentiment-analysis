@@ -1,5 +1,5 @@
 """
-Code that creates, trains, evaluates, and saves the neural network for sentiment analysis
+Task 2 Code that creates, trains, evaluates, and saves the neural network for sentiment analysis
 """
 import numpy as np
 import pandas as pd
@@ -14,8 +14,10 @@ with open('data/train_encoded_text', 'rb') as f:
 Y_train = pd.read_pickle('data/train_labels')
 
 # Defining the architecture of the model
+
 model = Sequential([
-    # Embedding layer - converts sequence of word indices into a sequence of vectors, each vector encodes a word
+    # Embedding layer - converts sequence of word indices 
+    # into a sequence of vectors, each vector encodes a word
     Embedding(input_dim=1000, output_dim=50, mask_zero=True),
     # LSTM layer: retains important information in the sequence but forgets unimportant
     LSTM(units=64, dropout=0.2, recurrent_dropout=0.2),
@@ -30,6 +32,9 @@ model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accur
 model.fit(X_train, Y_train, epochs=5, batch_size=32)
 
 print('model compiled successfully')
+
+model_name = 'compiled_at_' + str(datetime.datetime.now())
+model.save('models/' + model_name)
 
 with open('data/test_encoded_text', 'rb') as f:
     X_test = np.load(f)
