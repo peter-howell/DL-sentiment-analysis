@@ -15,19 +15,21 @@ from load_datasets import clean_text
 # load the model
 model = keras.models.load_model('models/compiled_at_2023-04-27 002722.366698')
 
-def predict_label(text: str, encoder: TextVectorization, label_dict: dict[int, str]) -> str:
+def predict_label(text: str, encoder: TextVectorization) -> str:
     """Wrapper for predicting the label of certain text using the compiled model and an encoder
     
     Args:
         text (str): text to predict
         encoder (TextVectorization): encoder to encode the text with, converts string to sequence of token indices
-        label_dict: labels to use 
     Returns:
         (str): the predicted label of the text. Either positive, neutral, or negative
     """
+    label_dict = ['Negative', 'Neutral', 'Positive']
     text = clean_text(text)
     text = encoder(np.array([text]))
     prediction = np.argmax(model(text))
+    if label_dict is None:
+        return prediction
     return label_dict[prediction]
     
 def make_encoder() -> TextVectorization:
@@ -67,11 +69,11 @@ def examples():
     encoder = make_encoder()
     # a few simple examples
     example_review = 'I loved this restaurant, the food was great'
-    example(example_review, 'positive', encoder)
+    example(example_review, 'Positive', encoder)
     example_review = 'food was yucky, service even worse'
-    example(example_review, 'negative', encoder)
+    example(example_review, 'Negative', encoder)
     example_review = "Eh it was okay, I don't have super strong feelings about it. Not the worst, not the best."
-    example(example_review, 'neutral', encoder)
+    example(example_review, 'Neutral', encoder)
 
 def load_test_data():
     """Loads the encoded test data
