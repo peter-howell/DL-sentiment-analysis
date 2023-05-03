@@ -32,7 +32,7 @@ def words_from_series(series: pd.Series) -> list[str]:
 
 
 def get_business_attributes(business_data: dict, n_attributes=None):
-    """Gets the business attributes present in `business_data`, optionally getting only the top `n` boolean attributes
+    """Gets the business boolean attributes present in `business_data`, optionally getting only the top `n_attributes` attributes
 
     Args:
         business_data (dict): dictionary with business_id as keys and attributes as values
