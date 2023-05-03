@@ -1,5 +1,5 @@
 """
-Evaluates and analyzes the compiled model, plots a confusion matrix. Also allows for examples to be run
+Evaluates and analyzes the compiled model, plots a confusion matrix. Also allows for examples to be run for task 2
 """
 import matplotlib.pyplot as plt
 import numpy as np
